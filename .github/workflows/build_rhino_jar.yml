@@ -1,0 +1,33 @@
+name: Build Rhino JAR Only
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions: read-all
+
+env:
+  GRADLE_OPTS: "--enable-native-access=ALL-UNNAMED"
+
+jobs:
+  build-rhino-jar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Rhino
+        uses: actions/checkout@v4.2.2
+      
+      - name: Set up Java
+        uses: actions/setup-java@v5.2.0
+        with:
+          java-version: '25'
+          distribution: 'adopt'
+      
+      - name: Build Rhino JAR
+        run: ./gradlew :rhino:jar
+      
+      - name: Upload JAR Artifact
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: rhino-jar
+          path: rhino/build/libs/rhino-*.jar
